@@ -42,6 +42,14 @@ public class Address {
         return zip;
     }
 
+    public Address() {
+        this.address1 = "";
+        this.address2 = "";
+        this.city = "";
+        this.state = "";
+        this.zip = "";
+    }
+
     public Address(@JsonProperty("address1") final String address1, @JsonProperty("address2") final String address2,
                    @JsonProperty("city") final String city, @JsonProperty("state") final String state,
                    @JsonProperty("zip") final String zip) {

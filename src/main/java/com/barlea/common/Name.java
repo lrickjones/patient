@@ -28,6 +28,12 @@ public class Name {
         return last;
     }
 
+    public Name() {
+        this.first = "";
+        this.middle = "";
+        this.last = "";
+    }
+
     public Name(@JsonProperty("first") final String first, @JsonProperty("middle") final String middle,
                 @JsonProperty("last") final String last) {
         this.first = first;

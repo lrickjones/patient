@@ -4,6 +4,7 @@ import com.barlea.common.Address;
 import com.barlea.common.Birthdate;
 import com.barlea.common.Name;
 import com.owlike.genson.Genson;
+import com.owlike.genson.annotation.JsonProperty;
 import org.hyperledger.fabric.contract.Context;
 import org.hyperledger.fabric.contract.ContractInterface;
 import org.hyperledger.fabric.contract.annotation.Contract;
@@ -15,16 +16,32 @@ import org.hyperledger.fabric.shim.ChaincodeStub;
 
 
 @Contract(
-        name = "Agreements",
+        name = "Patients",
         info = @Info(
-                title = "Agreements contract",
-                description = "A java chaincode example",
-                version = "0.0.1-SNAPSHOT"))
+                title = "Patient contract",
+                description = "Manage patients in repository",
+                version = "0.0.5-SNAPSHOT"))
+/*
+        info = @Info(
+        title = "FabCar contract",
+        description = "The hyperlegendary car contract",
+        version = "0.0.1-SNAPSHOT",
+        license = @License(
+                name = "Apache 2.0 License",
+                url = "http://www.apache.org/licenses/LICENSE-2.0.html"),
+        contact = @Contact(
+                email = "f.carr@example.com",
+                name = "F Carr",
+                url = "https://hyperledger.example.com")))
+*/
 
 @Default
 public final class PatientRepository implements ContractInterface{
     private final Genson genson = new Genson();
 
+
+    // Sample initLedger call
+    //peer chaincode invoke --tls --cafile /home/rick/development/proto-barlea-hipaa/hyperledger/hlf2-template/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt -C mychannel -n patient -c '{"Args":["initLedger"]}'
     @Transaction()
     public void initLedger(final Context ctx) {
         ChaincodeStub stub = ctx.getStub();
@@ -44,9 +61,9 @@ public final class PatientRepository implements ContractInterface{
         String patientState = stub.getStringState(key);
 
         if (patientState.isEmpty()) {
-            String errorMessage = String.format("Agreement %s does not exist", key);
+            String errorMessage = String.format("Patient %s does not exist", key);
             System.out.println(errorMessage);
-            throw new ChaincodeException(errorMessage, "Agreement not found");
+            throw new ChaincodeException(errorMessage, "Patient not found");
         }
 
         Patient patient = genson.deserialize(patientState, Patient.class);
@@ -55,11 +72,14 @@ public final class PatientRepository implements ContractInterface{
     }
 
     // sample create parameter
-    //'{"Args":["createPatient","PTNT000","{\"first\":\"rick\"}","Male","{\"address1\":\"123 Easy St\",\"address2\":\"Basement\",\"city\":\"Clarkston\", \"state\":\"WA\", \"zip\":\"99403\"}","{\"year\":\"1965\",\"month\":\"04\",\"day\":\"20\"}"]}'
-
+    //peer chaincode invoke --tls --cafile /home/rick/development/proto-barlea-hipaa/hyperledger/hlf2-template/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt -C mychannel -n patient -c '{"Args":["createPatient","PTNT000","{\"first\":\"rick\",\"middle\":\"L\",\"last\":\"Jones\"}","Male","{\"address1\":\"123 Easy St\",\"address2\":\"Basement\",\"city\":\"Clarkston\", \"state\":\"WA\", \"zip\":\"99403\"}","{\"year\":1965,\"month\":4,\"day\":20}"]}'
+    //'{"Args":["createPatient","PTNT000","{\"first\":\"rick\",\"middle\":\"L\",\"last\":\"Jones\"}","Male","{\"address1\":\"123 Easy St\",\"address2\":\"Basement\",\"city\":\"Clarkston\", \"state\":\"WA\", \"zip\":\"99403\"}","{\"year\":1965,\"month\":4,\"day\":20}"]}'
     @Transaction()
-    public Patient createPatient(final Context ctx, final String key, final Name name, final String gender,
-                                 final Address address, final Birthdate birthdate) {
+    public Patient createPatient(final Context ctx, final String key,
+                                 final Name name,
+                                 final String gender,
+                                 final Address address,
+                                 final Birthdate birthdate) {
         ChaincodeStub stub = ctx.getStub();
 
         String patientState = stub.getStringState(key);

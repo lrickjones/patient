@@ -33,6 +33,12 @@ public class Birthdate {
         return LocalDate.of(this.year,this.month,this.day);
     }
 
+    public Birthdate() {
+        this.year = 0;
+        this.month = 0;
+        this.day = 0;
+    }
+
     public Birthdate(@JsonProperty("year") final int year, @JsonProperty("month") final int month,
                 @JsonProperty("day") final int day) {
         this.year = year;
